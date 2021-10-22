@@ -1,3 +1,5 @@
+const React = require("react");
+
 class MultiplicationTable extends React.Component {
   state = {
     firstNumber: Math.ceil(Math.random() * 9),
@@ -7,8 +9,6 @@ class MultiplicationTable extends React.Component {
   };
 
   render() {
-    console.log("render");
-
     const onRef = (element) => {
       // console.log("element", element);
     };
@@ -57,3 +57,5 @@ class MultiplicationTable extends React.Component {
     );
   }
 }
+
+module.exports = MultiplicationTable;
