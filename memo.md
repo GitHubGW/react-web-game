@@ -42,6 +42,7 @@
 ```javascript
 // webpack.config.js
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
   // name: 웹팩 설정 파일의 이름을 지정해준다.
@@ -52,6 +53,7 @@ module.exports = {
   mode: "development",
 
   // devtool: 소스 맵 생성 여부와 방법을 지정한다.
+  // 개발단계일 떄는 eval, 배포단계일 때는 hidden-source-map을 사용할 수 있다.
   devtool: "eval",
 
   // resolve: 현재 이 웹팩 설정 파일이 읽어올 파일들에 대한 확장자명을 지정해준다.
@@ -68,21 +70,32 @@ module.exports = {
   // 바벨 로더를 적용해주게 되면 js나 jsx문법에 바벨을 적용해서 최신 문법을 오래된 문법으로 변경해주도록 한다.
   // options에 presets에는 바벨이 실행해야 할 preset 옵션들을 지정해준다.
   // 우리가 설치한 @babel/preset-env, @babel/preset-react preset들을 지정해준다.
+  // @babel/preset-env는 옛날 브라우저를 지원하기 위한 옵션이다.
+  // preset은 여러 개의 플러그인들이 합쳐진 모음이다.
   module: {
     rules: [
       {
         test: /\.jsx?/,
         loader: "babel-loader",
-        options: { presets: ["@babel/preset-env", "@babel/preset-react"] },
+        // options: { presets: ["@babel/preset-env", "@babel/preset-react"] },
+        // 위의 옵션에서 @babel/preset-env에 추가적인 설정들을 주고 싶다면 아래와 같이 세분화해서 추가 설정들을 줄 수 있다.
+        // targets: { browsers: ["> 1% in KR"] }에는 웹팩으로 변환한 코드가 지원할 브라우저에 대한 설정을 해줄 수 있다.
+        // https://github.com/browserslist/browserslist
+        options: {
+          presets: [["@babel/preset-env", { targets: { browsers: ["> 1% in KR"] }, debug: true }], "@babel/preset-react"],
+        },
       },
     ],
   },
 
+  // 플러그인은 추가적으로 웹팩에 추가 기능들을 가지고 있는 플러그인들을 넣고 싶을 때 사용할 수 있다.
+  plugins: [new webpack.LoaderOptionsPlugin({ debug: true })],
+
   // entry: 합칠 파일들을 넣는 부분으로 app안에 배열로 합칠 파일들을 넣어준다.
-  // 원래는 app안에 client.jsx와 WoredRelay.jsx파일을 합치기 때문에 두 파일을 모두 적어줘야 한다.
-  // 하지만 client.jsx에서 WordRelay.jsx파일을 불러오기 때문에, client.jsx만 넣어줘도 된다. (뒤에 확장자명 생략 가능)
+  // 원래는 app안에 index.jsx와 WoredRelay.jsx파일을 합치기 때문에 두 파일을 모두 적어줘야 한다.
+  // 하지만 index.jsx에서 WordRelay.jsx파일을 불러오기 때문에, index.jsx만 넣어줘도 된다. (뒤에 확장자명 생략 가능)
   entry: {
-    app: ["./client"],
+    app: ["./index"],
   },
 
   // output: 위에 entry에서 지정한 파일들을 하나로 합쳐서 출력해주는 부분이다.
@@ -92,10 +105,23 @@ module.exports = {
   // 현재 이 webpack.config.js파일이 위치한 경로를 의미하는 __dirname + dist폴더에 합친 파일들을 담도록 한다.
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "app.js",
+    filename: "index.js",
   },
 };
 ```
+
+#### Webpack Dev Server
+
+- Webpack Dev Server를 사용해서 핫리로딩을 사용할 수 있다.
+- Webpack Dev Server는 webpack.config.js파일에 있는 코드를 빌드한 후, 그 결과물을 메모리와 dist폴더에 저장해놓고 실행해준다.
+- Webpack Dev Server는 기본적으로 리로딩을 시켜주지만 아래 플러그인들을 설치하게 되면, 핫리로딩을 통해 변경된 부분이 있으면 감지해서, 저장했던 결과물을 수정해준다.
+- `"serve": "webpack serve --env development"`
+
+#### Reloading vs Hot Reloading
+
+- Reloading은 단순히 새로고침을 해주는 것이다. 새로고침을 하게 되면 기존 브라우저가 가지고 있는 데이터가 다 날아가고, 새로 화면을 띄우는 것이다.
+- Hot Reloading은 기존 데이터를 유지하면서 새로 화면을 띄우는 것이다.
+- Hot Reloading을 사용하기 위해 @pmmmwh/react-refresh-webpack-plugin와 react-refresh플러그인을 설치해준 것이다.
 
 #### js와 jsx의 차이
 
