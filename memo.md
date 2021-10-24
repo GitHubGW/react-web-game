@@ -1,5 +1,9 @@
 ## React Web Game
 
+- multiplication-table: 구구단
+- word-relay: 끝말잇기
+- number-baseball: 숫자야구
+
 #### React를 사용하는 이유
 
 - 웹에서도 앱처럼 부드럽고 빠른 사용자 경험이 좋은 사이트를 만들 수 있다.
@@ -38,6 +42,7 @@
 - webpack을 실행하기 위해서는 터미널에 webpack을 실행한다.
 - webpack명령어가 터미널에 등록되어있지 않다면 package.json에 script부분에 지정해주거나 npx를 앞에 붙여서 실행할 수 있다.
 - webpack.config.js파일에는 웹팩이 JSX파일을 읽고 처리할 수 있도록 바벨 및 여러 규칙들을 설정해줘야 한다.
+- webpack.config.js파일은 노드가 실행해주는 파일이기 때문에 require가 아닌 import문법을 사용하면 에러가 난다.
 
 ```javascript
 // webpack.config.js
