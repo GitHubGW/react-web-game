@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  name: "multiplication-table-setting",
+  name: "webpack-config-multiplication-table",
   mode: "development",
   devtool: "eval",
   resolve: { extensions: [".js", ".jsx"] },
