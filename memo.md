@@ -171,3 +171,82 @@ module.exports = {
   </body>
 </html>
 ```
+
+#### shouldComponentUpdate
+
+- this.setState({})를 사용해서 state값을 변경할 때, 값이 바뀌지 않아도 리액트에서 리랜더링하는 문제가 있다.
+- 해당 문제는 성능 이슈에도 영향을 주는 부분이기 때문에 값이 바뀌지 않았을 때는 리액트가 리랜더링하지 않도록 해줘야 한다.
+- 그 때 사용할 수 있는 메서드가 shouldComponentUpdate가 있다.
+- shouldComponentUpdate는 true나 false를 리턴하게 해주면 되는데, true가 기본 값으로 값이 바뀌지 않아도 리랜더링한다.
+- false로 바꿔줘서 값이 바뀌지 않을 때는 리랜더링하지 않도록 해준다.
+
+```javascript
+import React from "react";
+
+class RenderTest extends React.Component {
+  state = {
+    count: 0,
+  };
+
+  shouldComponentUpdate(nextProps, nextState, nextContent) {
+    return this.state.count !== nextState.count;
+  }
+
+  handleOnClick = () => {
+    this.setState({});
+  };
+
+  render() {
+    console.log("랜더링", this.state);
+
+    return (
+      <div>
+        <button onClick={this.handleOnClick}>버튼</button>
+      </div>
+    );
+  }
+}
+
+export default RenderTest;
+```
+
+#### PureComponent
+
+- PureComponent는 위의 shouldComponentUpdate의 기능을 가지고 있는 컴포넌트이다. 아래와 같이 PureComponent로 사용할 수 있다.
+- PureComponent는 state에 바뀐 부분이 있는지 확인하고 true나 false를 반환한다.
+- 단 배열이나 객체처럼 조금 복잡하고 참조관계가 있는 구조가 생기면 PureComponent도 문제가 있다.
+- 컴포넌트가 복잡해지면 PureComponent가 제대로 동작하지 않는 경우도 있고, state값이 바뀌어도 랜더링되지 않도록 직접 커스터마이징해서 사용하는 경우도 있기 때문에 PureComponent만이 아닌 shouldComponentUpdate를 사용하는 경우도 많다.
+
+```javascript
+import React from "react";
+
+class RenderTest extends React.PureComponent {
+  state = {
+    count: 0,
+  };
+
+  handleOnClick = () => {
+    this.setState({});
+  };
+
+  render() {
+    console.log("랜더링", this.state);
+
+    return (
+      <div>
+        <button onClick={this.handleOnClick}>버튼</button>
+      </div>
+    );
+  }
+}
+
+export default RenderTest;
+```
+
+#### memo
+
+- UI 성능을 향상시키기 위해, React는 고차 컴포넌트(Higher Order Component, HOC) React.memo()를 제공한다. 
+- 랜더링 결과를 메모이징(Memoizing)함으로써, 불필요한 리랜더링을 방지할 수 있다.
+- 컴포넌트를 memo()로 감싸주게 되면, React는 컴퍼넌트를 랜더링하고 결과를 메모이징한다. 
+- 그리고 다음 랜더링이 일어날 때 props가 같다면, React는 메모이징된 데이터를 재사용한다.
+- 즉, 메모이징한 데이터를 재사용함으로써, React에서 리랜더링을 할 때, 가상 DOM에서 달라진 부분을 확인하지 않아 성능 향상을 얻을 수 있다.

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { memo, useRef, useState } from "react";
 
 const NumberBaseball = () => {
   const [value, setValue] = useState("");
@@ -49,4 +49,4 @@ const NumberBaseball = () => {
   );
 };
 
-export default NumberBaseball;
+export default memo(NumberBaseball);
